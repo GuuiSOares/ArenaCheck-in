@@ -1,4 +1,4 @@
-import { doc, getDoc } from 'firebase/firestore';
+import { addDoc, collection, doc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 
 import { db } from '@/config/firebase';
@@ -37,5 +37,12 @@ export function useFirestore() {
     buscarTreinoDoDia();
   }, []);
 
-  return { treino, carregando };
+  async function registrarPresenca(uid: string) {
+    await addDoc(collection(db, 'checkins'), {
+      uid,
+      data: serverTimestamp(),
+    });
+  }
+
+  return { treino, carregando, registrarPresenca };
 }

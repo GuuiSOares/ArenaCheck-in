@@ -1,6 +1,7 @@
 import { Redirect } from 'expo-router';
-import { Check, LogOut } from 'lucide-react-native';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Check, Fingerprint, LogOut } from 'lucide-react-native';
+import { useState } from 'react';
+import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useAuth } from '@/hooks/useAuth';
@@ -9,7 +10,26 @@ import { cores, fontes } from '@/theme';
 
 export default function DashboardScreen() {
   const { user, token, logout } = useAuth();
-  const { treino, carregando } = useFirestore();
+  const { treino, carregando, registrarPresenca } = useFirestore();
+  const [registrando, setRegistrando] = useState(false);
+  const [presencaRegistrada, setPresencaRegistrada] = useState(false);
+
+  async function registrar() {
+    if (!user) {
+      return;
+    }
+
+    setRegistrando(true);
+    try {
+      await registrarPresenca(user.uid);
+      setPresencaRegistrada(true);
+      Alert.alert('Presença registrada', 'Bom treino!');
+    } catch {
+      Alert.alert('Erro', 'Não foi possível registrar a presença. Tente novamente.');
+    } finally {
+      setRegistrando(false);
+    }
+  }
 
   if (!token) {
     return <Redirect href="/login" />;
@@ -54,6 +74,17 @@ export default function DashboardScreen() {
           ))}
         </View>
       </ScrollView>
+
+      <TouchableOpacity
+        style={[styles.botaoPresenca, presencaRegistrada && styles.botaoPresencaRegistrada]}
+        onPress={registrar}
+        disabled={registrando || presencaRegistrada}
+      >
+        <Fingerprint size={20} color={cores.texto} />
+        <Text style={styles.botaoPresencaTexto}>
+          {presencaRegistrada ? 'Presença registrada' : 'Registrar Presença'}
+        </Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
@@ -155,5 +186,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: cores.destaqueSuave,
+  },
+  botaoPresenca: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    height: 56,
+    marginTop: 16,
+    marginBottom: 20,
+    paddingHorizontal: 24,
+    borderRadius: 16,
+    backgroundColor: cores.destaque,
+  },
+  botaoPresencaRegistrada: {
+    opacity: 0.5,
+  },
+  botaoPresencaTexto: {
+    fontFamily: fontes.outfitBold,
+    fontSize: 16,
+    color: cores.texto,
   },
 });

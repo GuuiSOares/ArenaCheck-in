@@ -1,16 +1,18 @@
 import { Redirect } from 'expo-router';
-import { Check, Fingerprint, LogOut } from 'lucide-react-native';
+import { Check, Fingerprint, LogOut, Megaphone } from 'lucide-react-native';
 import { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useAuth } from '@/hooks/useAuth';
+import { useFeatureToggle } from '@/hooks/useFeatureToggle';
 import { useFirestore } from '@/hooks/useFirestore';
 import { cores, fontes } from '@/theme';
 
 export default function DashboardScreen() {
   const { user, token, logout } = useAuth();
   const { treino, carregando, registrarPresenca } = useFirestore();
+  const exibirBannerEvento = useFeatureToggle('exibir_banner_evento');
   const [registrando, setRegistrando] = useState(false);
   const [presencaRegistrada, setPresencaRegistrada] = useState(false);
 
@@ -56,6 +58,16 @@ export default function DashboardScreen() {
             {!carregando && !treino && 'Hoje é dia de descanso'}
           </Text>
         </View>
+
+        {exibirBannerEvento && (
+          <View style={styles.banner}>
+            <Megaphone size={22} color={cores.destaque} />
+            <View style={styles.bannerTextos}>
+              <Text style={styles.bannerTitulo}>Evento na academia</Text>
+              <Text style={styles.bannerDescricao}>Aulão especial neste sábado às 10h. Não perca!</Text>
+            </View>
+          </View>
+        )}
 
         <View style={styles.lista}>
           {treino?.exercicios.map((exercicio) => (
@@ -143,6 +155,31 @@ const styles = StyleSheet.create({
     flex: 1,
     fontFamily: fontes.geistRegular,
     fontSize: 15,
+    color: cores.textoSecundario,
+  },
+  banner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+    marginTop: 16,
+    padding: 18,
+    borderWidth: 1,
+    borderRadius: 16,
+    borderColor: cores.destaque,
+    backgroundColor: cores.destaqueSuave,
+  },
+  bannerTextos: {
+    flex: 1,
+  },
+  bannerTitulo: {
+    fontFamily: fontes.outfitSemiBold,
+    fontSize: 16,
+    color: cores.texto,
+  },
+  bannerDescricao: {
+    marginTop: 4,
+    fontFamily: fontes.geistRegular,
+    fontSize: 14,
     color: cores.textoSecundario,
   },
   lista: {

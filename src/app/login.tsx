@@ -1,4 +1,4 @@
-import { Redirect } from 'expo-router';
+import { Link, Redirect } from 'expo-router';
 import { Dumbbell, Eye, EyeOff, Lock, Mail } from 'lucide-react-native';
 import { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
@@ -101,6 +101,13 @@ export default function LoginScreen() {
         <TouchableOpacity style={styles.esqueciBotao} onPress={esqueciSenha}>
           <Text style={styles.esqueciTexto}>Esqueceu a senha?</Text>
         </TouchableOpacity>
+
+        <View style={styles.cadastroLinha}>
+          <Text style={styles.cadastroTexto}>Não tem uma conta?</Text>
+          <Link href="/cadastro" style={styles.cadastroLink}>
+            Cadastre-se
+          </Link>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -196,5 +203,22 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textDecorationLine: 'underline',
     color: cores.textoSecundario,
+  },
+  cadastroLinha: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 4,
+    marginTop: 72,
+    padding: 24,
+  },
+  cadastroTexto: {
+    fontFamily: fontes.geistRegular,
+    fontSize: 14,
+    color: cores.textoSecundario,
+  },
+  cadastroLink: {
+    fontFamily: fontes.geistSemiBold,
+    fontSize: 14,
+    color: cores.destaque,
   },
 });

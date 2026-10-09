@@ -40,7 +40,7 @@ Toda a arquitetura usa somente o **Firebase** (Authentication e Cloud Firestore)
   - `useFeatureToggle`: escuta em tempo real as flags de interface
 - **Segurança**: o JWT do usuário é extraído com `getIdToken()` e salvo de forma criptografada no dispositivo com `expo-secure-store`. Ele é atualizado automaticamente sempre que o Firebase renova o token. No Firestore, regras de segurança permitem que apenas usuários autenticados leiam os treinos e criem check-ins em seu próprio nome.
 
-> **Feature adicional:** o feature toggle foi implementado com um documento do Firestore lido em tempo real (`onSnapshot`), pois o SDK do Firebase Remote Config não é suportado no Expo Go.
+> **Feature adicional:** feature toggle implementado com um documento do Firestore lido em tempo real (`onSnapshot`).
 
 ## Estrutura do projeto
 

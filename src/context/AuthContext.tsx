@@ -1,5 +1,11 @@
 import * as SecureStore from 'expo-secure-store';
-import { onIdTokenChanged, signInWithEmailAndPassword, signOut, User } from 'firebase/auth';
+import {
+  onIdTokenChanged,
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+  signOut,
+  User,
+} from 'firebase/auth';
 import { createContext, ReactNode, useEffect, useState } from 'react';
 
 import { auth } from '@/config/firebase';
@@ -10,6 +16,7 @@ type AuthContextData = {
   loading: boolean;
   login: (email: string, senha: string) => Promise<void>;
   logout: () => Promise<void>;
+  recuperarSenha: (email: string) => Promise<void>;
 };
 
 export const AuthContext = createContext({} as AuthContextData);
@@ -44,8 +51,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await signOut(auth);
   }
 
+  async function recuperarSenha(email: string) {
+    await sendPasswordResetEmail(auth, email);
+  }
+
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, token, loading, login, logout, recuperarSenha }}>
       {children}
     </AuthContext.Provider>
   );

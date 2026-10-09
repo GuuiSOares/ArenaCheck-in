@@ -7,7 +7,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { cores, fontes } from '@/theme';
 
 export default function LoginScreen() {
-  const { login } = useAuth();
+  const { login, recuperarSenha } = useAuth();
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [mostrarSenha, setMostrarSenha] = useState(false);
@@ -26,6 +26,20 @@ export default function LoginScreen() {
       Alert.alert('Erro', 'E-mail ou senha inválidos.');
     } finally {
       setCarregando(false);
+    }
+  }
+
+  async function esqueciSenha() {
+    if (!email) {
+      Alert.alert('Atenção', 'Digite seu e-mail para recuperar a senha.');
+      return;
+    }
+
+    try {
+      await recuperarSenha(email);
+      Alert.alert('E-mail enviado', 'Verifique sua caixa de entrada para redefinir a senha.');
+    } catch {
+      Alert.alert('Erro', 'Não foi possível enviar o e-mail. Confira o endereço digitado.');
     }
   }
 
@@ -77,6 +91,10 @@ export default function LoginScreen() {
 
         <TouchableOpacity style={styles.botao} onPress={entrar} disabled={carregando}>
           <Text style={styles.botaoTexto}>{carregando ? 'Entrando...' : 'Entrar'}</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.esqueciBotao} onPress={esqueciSenha}>
+          <Text style={styles.esqueciTexto}>Esqueceu a senha?</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
@@ -162,5 +180,16 @@ const styles = StyleSheet.create({
     fontFamily: fontes.outfitBold,
     fontSize: 16,
     color: cores.texto,
+  },
+  esqueciBotao: {
+    marginTop: 20,
+    paddingTop: 8,
+    alignSelf: 'center',
+  },
+  esqueciTexto: {
+    fontFamily: fontes.geistMedium,
+    fontSize: 14,
+    textDecorationLine: 'underline',
+    color: cores.textoSecundario,
   },
 });

@@ -1,6 +1,6 @@
 import { Redirect } from 'expo-router';
-import { LogOut } from 'lucide-react-native';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Check, LogOut } from 'lucide-react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useAuth } from '@/hooks/useAuth';
@@ -25,16 +25,35 @@ export default function DashboardScreen() {
         <View style={styles.espacoCabecalho} />
       </View>
 
-      <Text style={styles.saudacao}>Olá, {user?.displayName ?? 'atleta'}!</Text>
+      <ScrollView contentContainerStyle={styles.conteudo}>
+        <Text style={styles.saudacao}>Olá, {user?.displayName ?? 'atleta'}!</Text>
 
-      <View style={styles.subtituloLinha}>
-        <View style={styles.ponto} />
-        <Text style={styles.subtitulo}>
-          {carregando && 'Carregando treino...'}
-          {!carregando && treino && `Seu treino de hoje • Foco em ${treino.foco}`}
-          {!carregando && !treino && 'Hoje é dia de descanso'}
-        </Text>
-      </View>
+        <View style={styles.subtituloLinha}>
+          <View style={styles.ponto} />
+          <Text style={styles.subtitulo}>
+            {carregando && 'Carregando treino...'}
+            {!carregando && treino && `Seu treino de hoje • Foco em ${treino.foco}`}
+            {!carregando && !treino && 'Hoje é dia de descanso'}
+          </Text>
+        </View>
+
+        <View style={styles.lista}>
+          {treino?.exercicios.map((exercicio) => (
+            <View key={exercicio.nome} style={styles.card}>
+              <View style={styles.cardBarra} />
+              <View style={styles.cardTextos}>
+                <Text style={styles.cardTitulo}>{exercicio.nome}</Text>
+                <Text style={styles.cardDescricao}>
+                  {exercicio.series} séries x {exercicio.repeticoes} repetições • {exercicio.carga}
+                </Text>
+              </View>
+              <View style={styles.cardCheck}>
+                <Check size={14} strokeWidth={3} color={cores.destaque} />
+              </View>
+            </View>
+          ))}
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -67,6 +86,9 @@ const styles = StyleSheet.create({
   espacoCabecalho: {
     width: 40,
   },
+  conteudo: {
+    paddingBottom: 24,
+  },
   saudacao: {
     marginTop: 20,
     fontFamily: fontes.outfitExtraBold,
@@ -91,5 +113,47 @@ const styles = StyleSheet.create({
     fontFamily: fontes.geistRegular,
     fontSize: 15,
     color: cores.textoSecundario,
+  },
+  lista: {
+    gap: 12,
+    marginTop: 16,
+  },
+  card: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+    padding: 18,
+    borderWidth: 1,
+    borderRadius: 16,
+    borderColor: cores.borda,
+    backgroundColor: cores.card,
+  },
+  cardBarra: {
+    width: 4,
+    alignSelf: 'stretch',
+    borderRadius: 2,
+    backgroundColor: cores.destaque,
+  },
+  cardTextos: {
+    flex: 1,
+  },
+  cardTitulo: {
+    fontFamily: fontes.outfitSemiBold,
+    fontSize: 18,
+    color: cores.texto,
+  },
+  cardDescricao: {
+    marginTop: 4,
+    fontFamily: fontes.geistRegular,
+    fontSize: 14,
+    color: cores.textoSecundario,
+  },
+  cardCheck: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: cores.destaqueSuave,
   },
 });
